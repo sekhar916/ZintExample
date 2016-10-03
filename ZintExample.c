@@ -15,8 +15,10 @@ int main()
         if(my_symbol != NULL) 
         {
                 printf("Symbol successfully created!\n");
-		ZBarcode_Encode(my_symbol, "2134233123121234", 0);
- //       	ZBarcode_Print(my_symbol, 0);
+		my_symbol->symbology = 58;
+	//	my_symbol->scale = 2;
+		ZBarcode_Encode(my_symbol, "www.google.com", 0);
+        	ZBarcode_Print(my_symbol, 0);
 		ZBarcode_Buffer(my_symbol, 0); 
 		printf("height= %d and width=%d\n", my_symbol->bitmap_height, my_symbol->bitmap_width);
 		printf("size %d\n", sizeof((my_symbol->bitmap)));	
@@ -38,19 +40,19 @@ void show_image( unsigned char *image, int height, int width)
 	
 
 //	printf("Hai I am BMP\n");
-	unsigned char BMPimage[width * height * 3 + 54];
-	int FileId= 1, n=0, extrabytes;
+	unsigned char BMPimage[WIDTH * height * 3 + 54];
+	int FileId= 1, n=0;
 	char filename[100];
-  	int  i, j,tmp=0,k=54,fd;
+  	int  i, j,tmp=0,k=54,fd, l; 
   	unsigned char *bmp_infoheader=BMPimage+14;
   	unsigned short int tmp_short;
-	int padSize  = (4-(width*3)%4)%4;
 	unsigned char pad[3] = {0,0,0};
+	memset(BMPimage, 0x00, WIDTH * height * 3 + 54);
 	if (extrabytes == 4)
    		extrabytes = 0;
 	BMPimage[0]='B';
 	BMPimage[1] = 'M';
-	tmp = 14 + 40 + width * height  *3;
+	tmp = 14 + 40 + WIDTH * height  *3;
 	memcpy((BMPimage+2), &tmp, 4);
 	/* 0 */
 	tmp = 0;
@@ -63,7 +65,7 @@ void show_image( unsigned char *image, int height, int width)
 	tmp = 40;
 	memcpy(bmp_infoheader, &tmp, 4);
 	/* Width */
-	tmp = width;
+	tmp = WIDTH;
 	memcpy(bmp_infoheader + 4, &tmp, 4);
 	/* Height */
 	tmp = height;
@@ -85,13 +87,20 @@ void show_image( unsigned char *image, int height, int width)
 	printf("1\n");
   	for ( i = 0; i < height * width; i++ )
   	{
-    //		for ( j = 0; j < width ; j++ )
     		{
-			BMPimage[k++] = image[n] ;
-		 	BMPimage[k++] = image[n+1] ;
-		 	BMPimage[k++] = image[n+2] ;
+			BMPimage[k++] = image[n];
+		 	BMPimage[k++] = image[n+1];
+		 	BMPimage[k++] = image[n+2];
 			n = n + 3;
-		//	printf("%d \n", k);
+			if(n%(width*3) == 0)
+			{
+				for(l = 0; l < ((WIDTH) - width) ;l++)
+				{
+					BMPimage[k++] = 0x00 ^ 0xFF;
+					BMPimage[k++] = 0x00 ^ 0xFF ;
+					BMPimage[k++] = 0x00 ^ 0xFF;
+				}
+			}
     		}
   	}
 	printf("2\n");
@@ -104,12 +113,9 @@ void show_image( unsigned char *image, int height, int width)
   	if(fd>0)
   	{
   		write(fd,BMPimage,54);
-//		for(i=height * width * 3 - 1;i>=0;i--)
 		for(i = height-1;i >= 0 ;  i--)
 		{
-//			write(fd, BMPimage+i+54,1);
-			write(fd,BMPimage+(i* width * 3- 1)+54,width*3);	
-			write(fd,pad,padSize );
+			write(fd,BMPimage+(i* WIDTH * 3)+54,WIDTH*3);	
 			
 		}
 		close(fd);
