@@ -15,7 +15,9 @@ int main()
         struct zint_symbol *my_symbol;my_symbol = ZBarcode_Create();
         if(my_symbol != NULL) 
         {
+#ifdef DEBUG
                 printf("Symbol successfully created!\n");
+#endif
 		my_symbol->symbology = 58;
 	//	my_symbol->scale = 2;
 		ZBarcode_Encode(my_symbol, "www.google.com", 0);
