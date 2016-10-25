@@ -39,8 +39,9 @@ int main()
 void show_image( unsigned char *image, int height, int width)
 {
 	
-
-//	printf("Hai I am BMP\n");
+#ifdef DEBUG
+	printf("Hai I am BMP\n");
+#endif
 	unsigned char BMPimage[WIDTH * height * 3 + 54];
 	int FileId= 1, n=0;
 	char filename[100];
