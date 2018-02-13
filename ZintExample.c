@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #define WIDTH 576
 #define DEBUG
-void show_image( unsigned char *, int , int  );
+void show_image( unsigned char *, int , int);
 
 int main()
 {
